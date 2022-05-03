@@ -3,21 +3,23 @@ const app = express();
 const taskRouter = require('./routes/tasks');
 const { connectDB } = require('./db/connect');
 require('dotenv').config();
+const errorHandlerMiddleware = require('./middlewares/error-handler');
 
 
-app.use(express.urlencoded({extended: false}));
-app.use(express.json({extended: false}));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ extended: false }));
 
 app.use('/api/v1', taskRouter);
+app.use(errorHandlerMiddleware);
 const port = process.env.PORT || 7000;
 
-const start = async () =>{
+const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    app.listen(port, ()=>{
+    app.listen(port, () => {
       console.log(`Server is listening on port ${port}...`);
     });
-  } catch (error) { 
+  } catch (error) {
     console.log(error);
   }
 }
